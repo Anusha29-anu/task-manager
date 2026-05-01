@@ -1,18 +1,41 @@
-# Task Manager API
+# 🚀 Task Manager (Full Stack)
 
-## Features
-- User Signup & Login (JWT Authentication)
-- Role-based user system
-- Create & view tasks
-- Protected routes
-- MongoDB database
-- Deployed on Railway
+A full-stack Task Manager web application where users can signup, login, create tasks, assign them, and track progress using a dashboard.
 
-## API Endpoints
-- POST /signup
-- POST /login
-- POST /tasks
-- GET /tasks
+---
+
+## 📌 Features
+
+- 🔐 Authentication (Signup/Login using JWT)
+- 👥 Role-based users (Admin / Member)
+- 📝 Task creation
+- 📊 Dashboard (Total / Pending / Completed tasks)
+- ☁️ Cloud Database (MongoDB Atlas)
+- 🚀 Backend deployed on Railway
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- HTML
+- Tailwind CSS
+- JavaScript
+
+### Backend
+- Node.js
+- Express.js
+
+### Database
+- MongoDB Atlas
+
+### Deployment
+- Railway
+
+---
+
+## 📁 Project Structure
+
 
 ## Live URL
 https://task-manager-production-0850.up.railway.app
