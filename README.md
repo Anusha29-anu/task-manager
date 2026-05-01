@@ -174,3 +174,6 @@ https://task-manager-production-0850.up.railway.app
 <img width="1902" height="947" alt="image" src="https://github.com/user-attachments/assets/46603687-0740-411f-89cc-9defdc0a566b" />
 
 <img width="1901" height="1006" alt="image" src="https://github.com/user-attachments/assets/0f0dcf58-dddd-4ce0-ab14-22160bf632bc" />
+
+Demo Video
+https://www.loom.com/share/d53ec77810bf405d9c425d027eb98307
