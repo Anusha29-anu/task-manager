@@ -48,20 +48,24 @@ const taskSchema = new mongoose.Schema({
 const Task = mongoose.model("Task", taskSchema);
 
 /* =========================
-   Auth Middleware
+   Auth Middleware (FIXED)
 ========================= */
 function auth(req, res, next) {
-  const token = req.headers.authorization;
+  const header = req.headers.authorization;
 
-  if (!token) {
+  if (!header) {
     return res.status(401).json({ message: "No token" });
   }
 
   try {
+    // 🔥 IMPORTANT FIX
+    const token = header.split(" ")[1]; // removes "Bearer"
+
     const decoded = jwt.verify(token, "SECRETKEY");
+
     req.user = decoded;
     next();
-  } catch {
+  } catch (err) {
     res.status(401).json({ message: "Invalid token" });
   }
 }
