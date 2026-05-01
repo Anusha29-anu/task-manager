@@ -11,23 +11,22 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// MongoDB Connection (Improved with options)
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log("✅ MongoDB Connected"))
-.catch(err => {
-  console.error("❌ DB Error:", err);
-  process.exit(1); // Stop app if DB fails
-});
+// ✅ MongoDB Connection (safe + stable)
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("✅ MongoDB Connected");
+  })
+  .catch(err => {
+    console.error("❌ DB Error:", err.message);
+    process.exit(1); // stop app if DB fails (prevents crash loop)
+  });
 
-// Sample Route
+// Routes
 app.get("/", (req, res) => {
   res.send("🚀 Task Manager API is running...");
 });
 
-// Task Model
+// Model
 const taskSchema = new mongoose.Schema({
   title: String,
   completed: { type: Boolean, default: false }
@@ -46,7 +45,7 @@ app.post("/tasks", async (req, res) => {
   }
 });
 
-// Get All Tasks
+// Get Tasks
 app.get("/tasks", async (req, res) => {
   try {
     const tasks = await Task.find();
@@ -56,7 +55,7 @@ app.get("/tasks", async (req, res) => {
   }
 });
 
-// Port (IMPORTANT for Railway)
+// Port (Railway uses this automatically)
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
