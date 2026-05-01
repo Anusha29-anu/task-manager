@@ -1,106 +1,64 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 const cors = require("cors");
 
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-
-const User = require("./models/User");
-const Project = require("./models/Project");
-const Task = require("./models/Task");
+dotenv.config();
 
 const app = express();
+
+// Middleware
 app.use(express.json());
 app.use(cors());
 
+// MongoDB Connection (Improved with options)
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("✅ MongoDB Connected"))
+.catch(err => {
+  console.error("❌ DB Error:", err);
+  process.exit(1); // Stop app if DB fails
+});
 
-// ================= DATABASE =================
-mongoose.connect("mongodb://127.0.0.1:27017/test")
-  .then(() => console.log("DB connected"))
-  .catch(err => console.log(err));
-
-
-// ================= TEST =================
+// Sample Route
 app.get("/", (req, res) => {
-  res.send("API running");
+  res.send("🚀 Task Manager API is running...");
 });
 
+// Task Model
+const taskSchema = new mongoose.Schema({
+  title: String,
+  completed: { type: Boolean, default: false }
+});
 
-// ================= SIGNUP =================
-app.post("/signup", async (req, res) => {
+const Task = mongoose.model("Task", taskSchema);
+
+// Create Task
+app.post("/tasks", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-
-    const existing = await User.findOne({ email });
-    if (existing) return res.send("User already exists");
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword
-    });
-
-    res.json(user);
+    const task = new Task(req.body);
+    const savedTask = await task.save();
+    res.json(savedTask);
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
-
-// ================= LOGIN =================
-app.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({ email });
-    if (!user) return res.send("User not found");
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.send("Wrong password");
-
-    const token = jwt.sign({ id: user._id }, "secret");
-
-    res.json({ token });
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
-});
-
-
-// ================= PROJECT =================
-app.post("/project", async (req, res) => {
-  try {
-    const project = await Project.create(req.body);
-    res.json(project);
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
-});
-
-
-// ================= TASK =================
-app.post("/task", async (req, res) => {
-  try {
-    const task = await Task.create(req.body);
-    res.json(task);
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
-});
-
-
-// ================= GET TASKS =================
+// Get All Tasks
 app.get("/tasks", async (req, res) => {
-  const tasks = await Task.find();
-  res.json(tasks);
+  try {
+    const tasks = await Task.find();
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-
-// ================= START SERVER =================
-const PORT = process.env.PORT || 5000;
+// Port (IMPORTANT for Railway)
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+  console.log(`✅ Server running on port ${PORT}`);
 });
